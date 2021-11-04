@@ -1,0 +1,67 @@
+stages:
+  - test
+  - package
+  - packagetest
+  - deploy
+
+test:debian:
+  stage: test
+  script:
+    - apt-get update -qy
+    - apt-get install -y python3-setuptools python3-pytest-runner python3-pytest python3-pylint-common python3-pytest-cov python3-pymupdf python3-pillow
+    - tox -e py39
+  tags:
+    - debian
+
+package:debian:
+  stage: package
+  script:
+    - apt-get update -qy
+    - apt-get install -y python-all python3-pytest-runner python3-stdeb python3-pytest python3-pylint-common python3-pytest-cov tox dh-python python3-pymupdf python3-pillow0
+    - rm -rf "./deb_dist"
+    - python3 setup.py --command-packages=stdeb.command bdist_deb
+  tags:
+    - debian
+
+  artifacts:
+    paths:
+      - deb_dist/*.deb
+    expire_in: 1d
+
+
+packagetest:debian:
+  stage: packagetest
+  script:
+    - apt-get update -qy
+    - cd deb_dist
+    - apt install ./*.deb -qy
+  tags:
+    - debian
+  dependencies:
+    - package:debian
+
+
+repoupdate:
+  stage: deploy
+  variables:
+    TWINE_USERNAME: Salamek
+  before_script:
+    - 'which ssh-agent || ( apt-get update -y && apt-get install openssh-client -y )'
+    - apt-get update -y
+    - apt-get install twine python-setuptools -y
+    - eval $(ssh-agent -s)
+    - ssh-add <(echo "$SSH_PRIVATE_KEY")
+    - mkdir -p ~/.ssh
+    - '[[ -f /.dockerenv ]] && echo -e "Host *\n\tStrictHostKeyChecking no\n\n" > ~/.ssh/config'
+  script:
+    - ssh www-data@repository 'rm -rf /var/www/repository.salamek.cz/cache/deb/pub/all/python3-file-thumbnailer*.deb'
+    - scp deb_dist/*.deb www-data@repository:/var/www/repository.salamek.cz/cache/deb/pub/all
+    - ssh www-data@repository '/var/www/repository.salamek.cz/deb-pub-update.sh'
+    - python3 setup.py sdist
+    - twine upload dist/*
+  dependencies:
+    - package:debian
+  tags:
+    - debian
+  only:
+    - tags
