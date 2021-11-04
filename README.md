@@ -1,7 +1,7 @@
 # File thumbnailer
 File thumbnailer for images, pdfs and more
 
-[![Tox tests](https://github.com/Salamek/thumbnailtron/actions/workflows/python-test.yml/badge.svg)](https://github.com/Salamek/thumbnailtron/actions/workflows/python-test.yml)
+[![Tox tests](https://github.com/Salamek/file-thumbnailer/actions/workflows/python-test.yml/badge.svg)](https://github.com/Salamek/file-thumbnailer/actions/workflows/python-test.yml)
 
 ## Installation
 
