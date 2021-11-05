@@ -42,5 +42,5 @@ class ConverterManager:
         path_info = Path(file_path)
         with path_info.open('rb') as file_handle:
             data = file_handle.read()
-            mime_type = Tools.detect_mimetype(data, path_info.suffix.lstrip('.')) if not force_mime_type else force_mime_type
+            mime_type = Tools.detect_mimetype(data, path_info) if not force_mime_type else force_mime_type
             return self.from_data(data, mime_type)

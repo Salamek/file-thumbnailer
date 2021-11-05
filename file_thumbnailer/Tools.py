@@ -1,4 +1,6 @@
 from typing import Optional
+import mimetypes
+import pathlib
 import magic
 from file_thumbnailer.models.Dimensions import Dimensions
 
@@ -22,21 +24,14 @@ class Tools:
         )
 
     @staticmethod
-    def detect_mimetype(data: bytes, extension: Optional[str] = None) -> str:
-        mime_type = magic.from_buffer(data, mime=True)  # type: ignore
-        if extension:
-            # Try to narrow down mimetype by extension in some shitty situation like zip archive packed XMLs and shit
-            mime_type_override = {
-                'application/zip': {
-                    'xps': 'application/vnd.ms-xpsdocument',
-                    'cbz': 'application/vnd.comicbook+zip'
-                },
-                'text/xml': {
-                    'fb2': 'application/x-fictionbook+xml'
-                }
-            }.get(mime_type, {}).get(extension)
+    def detect_mimetype(data: bytes, file_path: Optional[pathlib.Path] = None) -> str:
+        extension_detection_mimetypes = [
+            'application/zip',
+            'text/xml'
+        ]
 
-            if mime_type_override:
-                return mime_type_override
+        mime_type = magic.from_buffer(data, mime=True)  # type: ignore
+        if file_path and mime_type in extension_detection_mimetypes:
+            mime_type, _ = mimetypes.guess_type(str(file_path.absolute()))
 
         return mime_type
