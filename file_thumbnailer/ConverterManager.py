@@ -20,7 +20,7 @@ class ConverterManager:
         self.supported_mimetypes = {}
         for converter_class in self.converter_classes:
             if not converter_class.is_available():
-                self.log.info('Converter %(converter_name)s is not available', converter_name=converter_class)
+                self.log.info('Converter %s is not available', converter_class)
                 continue
             for supported_mimetype in converter_class.get_handle_mimetypes():
                 mimetype_used = self.supported_mimetypes.get(supported_mimetype)
@@ -29,7 +29,7 @@ class ConverterManager:
 
                 self.supported_mimetypes[supported_mimetype] = converter_class
 
-        self.log.info('Supported mimetypes: %(mimetypes)s', mimetypes=self.supported_mimetypes.keys())
+        self.log.info('Supported mimetypes: %s', self.supported_mimetypes.keys())
 
     def from_data(self, data: bytes, force_mime_type: Optional[str] = None) -> Converter:
         mime_type = Tools.detect_mimetype(data) if not force_mime_type else force_mime_type
