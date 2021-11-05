@@ -12,4 +12,4 @@ REGEXPS:
 VERSION_FILES:
     'file_thumbnailer/__init__.py': 'python'
     'setup.py': 'setup.py'
-    'archlinux/PKGBUILD': 'PKGBUILD'
+    #'archlinux/PKGBUILD': 'PKGBUILD'
