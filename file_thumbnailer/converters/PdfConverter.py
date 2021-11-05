@@ -36,6 +36,6 @@ class PdfConverter(Converter):
             page = 0
         source_pdf = fitz.Document(stream=self.data, filetype=self.mime_type)
         selected_page: fitz.Page = source_pdf[page]
-        selected_page_image = selected_page.getPixmap(alpha=False, matrix=fitz.Matrix(4.0, 4.0))
+        selected_page_image = selected_page.get_pixmap(alpha=False, matrix=fitz.Matrix(4.0, 4.0))
 
-        return Image.open(io.BytesIO(selected_page_image.getPNGData()))
+        return Image.open(io.BytesIO(selected_page_image.tobytes()))
