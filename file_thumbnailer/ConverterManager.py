@@ -5,6 +5,7 @@ from file_thumbnailer.converters.Converter import Converter
 from file_thumbnailer.converters.PdfConverter import PdfConverter
 from file_thumbnailer.converters.ImgConverter import ImgConverter
 from file_thumbnailer.Tools import Tools
+from file_thumbnailer.exceptions import NotSupportedException
 
 
 class ConverterManager:
@@ -35,7 +36,7 @@ class ConverterManager:
         mime_type = Tools.detect_mimetype(data) if not force_mime_type else force_mime_type
         converter = self.supported_mimetypes.get(mime_type)
         if not converter:
-            raise Exception('Mimetype {} is not supported, supported mimes are: {}'.format(mime_type, ', '.join(self.supported_mimetypes.keys())))
+            raise NotSupportedException('Mimetype {} is not supported, supported mimes are: {}'.format(mime_type, ', '.join(self.supported_mimetypes.keys())))
         return converter(data, mime_type)
 
     def from_file(self, file_path: str, force_mime_type: Optional[str] = None) -> Converter:
