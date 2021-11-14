@@ -22,7 +22,11 @@ class ImgConverter(Converter):
             'image/vnd-ms.dds',
             'image/dib',
             'application/eps',
-            'image/gif'
+            'image/gif',
+            'image/jpeg',
+            'image/png',
+            'image/ico',
+            'image/webp',
         ]
 
     def to_pil_image(self, page: Optional[int] = None) -> Image:
