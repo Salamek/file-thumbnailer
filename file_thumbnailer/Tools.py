@@ -9,8 +9,14 @@ class Tools:
 
     @staticmethod
     def calculate_dimensions(from_dimensions: Dimensions, to_dimensions: Dimensions) -> Dimensions:
-
         ratio_from = from_dimensions.width / from_dimensions.height
+
+        if not to_dimensions.width and to_dimensions.height:
+            to_dimensions.width = int(to_dimensions.height * ratio_from)
+
+        if not to_dimensions.height and to_dimensions.width:
+            to_dimensions.height = int(to_dimensions.width / ratio_from)
+
         ratio_to = to_dimensions.width / to_dimensions.height
 
         if ratio_from > ratio_to:
