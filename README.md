@@ -42,14 +42,9 @@ from file_thumbnailer.models.Dimensions import Dimensions
 
 converter_manager = ConverterManager()
 with open('my_file.pdf', 'rb') as read_file:
-
-    converter = converter_manager.from_data(read_file.read())
+    converter = converter_manager.from_data(read_file
     thumbnail = converter.to_image_bytes(Dimensions())
     with open('my_file_thumbnail.jpg', 'wb') as thumbnail_file:
         thumbnail_file.write(thumbnail)
 
-
-
-
 ```
-
