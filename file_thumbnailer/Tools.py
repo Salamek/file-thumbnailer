@@ -32,11 +32,25 @@ class Tools:
 
     @staticmethod
     def detect_mimetype(fp: Union[io.BytesIO, BinaryIO], file_path: Optional[pathlib.Path] = None) -> str:
+        # These mimetypes are sometimes not what they seems, lot of file formats are just renamed zips or xml
+        # We need to attempt file extension detection
         extension_detection_mimetypes = [
             'application/zip',
             'text/xml'
         ]
-        mime_type = magic.from_buffer(fp.read(16384), mime=True)  # type: ignore
+
+        # These mimetypes are broken in python-magic on debian and alike when using small buffer for detection for some reason?
+        #bricked_mime_detection = [
+        #    ([0x42, 0x4d], 'image/bmp')
+        #]
+
+        fp.seek(0)
+        buffer = fp.read(4096)
+        #for magic_number, override_mime_type in bricked_mime_detection:
+        #    if buffer.startswith(bytearray(magic_number)):
+        #        return override_mime_type
+
+        mime_type = magic.from_buffer(buffer, mime=True)  # type: ignore
         fp.seek(0)
         if file_path and mime_type in extension_detection_mimetypes:
             mime_type, _ = mimetypes.guess_type(str(file_path.absolute()))
