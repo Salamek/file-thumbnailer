@@ -36,7 +36,7 @@ class Tools:
             'application/zip',
             'text/xml'
         ]
-        mime_type = magic.from_buffer(fp.read(4096), mime=True)  # type: ignore
+        mime_type = magic.from_buffer(fp.read(), mime=True)  # type: ignore
         fp.seek(0)
         if file_path and mime_type in extension_detection_mimetypes:
             mime_type, _ = mimetypes.guess_type(str(file_path.absolute()))
