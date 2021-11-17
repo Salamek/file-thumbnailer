@@ -40,15 +40,15 @@ class Tools:
         ]
 
         # These mimetypes are broken in python-magic on debian and alike when using small buffer for detection for some reason?
-        #bricked_mime_detection = [
-        #    ([0x42, 0x4d], 'image/bmp')
-        #]
+        # It works ok on Archlinux with file 5.41-1
+        bricked_mime_detection = [
+            ([0x42, 0x4d], 'image/bmp')
+        ]
 
-        fp.seek(0)
         buffer = fp.read(4096)
-        #for magic_number, override_mime_type in bricked_mime_detection:
-        #    if buffer.startswith(bytearray(magic_number)):
-        #        return override_mime_type
+        for magic_number, override_mime_type in bricked_mime_detection:
+            if buffer.startswith(bytearray(magic_number)):
+                return override_mime_type
 
         mime_type = magic.from_buffer(buffer, mime=True)  # type: ignore
         fp.seek(0)
