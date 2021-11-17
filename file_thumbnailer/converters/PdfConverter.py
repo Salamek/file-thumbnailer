@@ -1,5 +1,5 @@
 import io
-from typing import List, Optional
+from typing import List, Optional, Union, BinaryIO
 from file_thumbnailer.converters.Converter import Converter
 
 is_pil = True
@@ -16,6 +16,13 @@ except ImportError:
 
 
 class PdfConverter(Converter):
+
+    def __init__(self, fp: Union[io.BytesIO, BinaryIO], mime_type: str):
+        super().__init__(fp, mime_type)
+        if not isinstance(fp, (bytes, io.BytesIO)):
+            fp = io.BytesIO(fp.read())
+
+        self.document = fitz.Document(stream=fp, filetype=self.mime_type)
 
     @staticmethod
     def is_available() -> bool:
@@ -34,13 +41,13 @@ class PdfConverter(Converter):
     def to_pil_image(self, page: Optional[int] = None) -> Image:
         if not page:
             page = 0
-        source_pdf = fitz.Document(stream=self.data, filetype=self.mime_type)
-        selected_page: fitz.Page = source_pdf[page]
+
+        selected_page: fitz.Page = self.document[page]
 
         # Compatibility with older version of fitz
         pixmap_callable = getattr(selected_page, 'get_pixmap', getattr(selected_page, 'getPixmap'))
 
         selected_page_image = pixmap_callable(alpha=False, matrix=fitz.Matrix(4.0, 4.0))
         # Compatibility with older version of fitz
-        tobytes_callable = getattr(selected_page_image, 'tobytes', getattr(selected_page_image, 'getPNGData'))
-        return Image.open(io.BytesIO(tobytes_callable()))
+        to_bytes_callable = getattr(selected_page_image, 'tobytes', getattr(selected_page_image, 'getPNGData'))
+        return Image.open(io.BytesIO(to_bytes_callable()))

@@ -1,5 +1,5 @@
 import io
-from typing import List, Optional
+from typing import List, Optional, Union, BinaryIO
 from file_thumbnailer.converters.Converter import Converter
 
 is_pil = True
@@ -10,6 +10,11 @@ except ImportError:
 
 
 class ImgConverter(Converter):
+
+    def __init__(self, fp: Union[io.BytesIO, BinaryIO], mime_type: str):
+        super().__init__(fp, mime_type)
+        self.image = Image.open(fp)
+        self.image.load()
 
     @staticmethod
     def is_available() -> bool:
@@ -30,4 +35,4 @@ class ImgConverter(Converter):
         ]
 
     def to_pil_image(self, page: Optional[int] = None) -> Image:
-        return Image.open(io.BytesIO(self.data))
+        return self.image

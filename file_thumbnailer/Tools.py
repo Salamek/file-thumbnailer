@@ -1,4 +1,5 @@
-from typing import Optional
+import io
+from typing import Optional, Union, BinaryIO
 import mimetypes
 import pathlib
 import magic
@@ -30,13 +31,13 @@ class Tools:
         )
 
     @staticmethod
-    def detect_mimetype(data: bytes, file_path: Optional[pathlib.Path] = None) -> str:
+    def detect_mimetype(fp: Union[io.BytesIO, BinaryIO], file_path: Optional[pathlib.Path] = None) -> str:
         extension_detection_mimetypes = [
             'application/zip',
             'text/xml'
         ]
-
-        mime_type = magic.from_buffer(data, mime=True)  # type: ignore
+        mime_type = magic.from_buffer(fp.read(1024), mime=True)  # type: ignore
+        fp.seek(0)
         if file_path and mime_type in extension_detection_mimetypes:
             mime_type, _ = mimetypes.guess_type(str(file_path.absolute()))
 

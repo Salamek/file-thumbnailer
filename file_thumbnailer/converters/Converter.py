@@ -1,5 +1,5 @@
 import io
-from typing import List, Optional
+from typing import List, Optional, Union, BinaryIO
 from PIL import Image
 from file_thumbnailer.models.Dimensions import Dimensions
 from file_thumbnailer.Tools import Tools
@@ -7,8 +7,8 @@ from file_thumbnailer.Tools import Tools
 
 class Converter:
 
-    def __init__(self, data: bytes, mime_type: str):
-        self.data = data
+    def __init__(self, fp: Union[io.BytesIO, BinaryIO], mime_type: str):
+        self.fp = fp
         self.mime_type = mime_type
 
     @staticmethod

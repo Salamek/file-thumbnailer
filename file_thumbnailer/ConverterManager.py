@@ -1,5 +1,6 @@
+import io
 import logging
-from typing import Dict, Type, Optional
+from typing import Dict, Type, Optional, Union, BinaryIO
 from pathlib import Path
 from file_thumbnailer.converters.Converter import Converter
 from file_thumbnailer.converters.PdfConverter import PdfConverter
@@ -32,16 +33,23 @@ class ConverterManager:
 
         self.log.info('Supported mimetypes: %s', self.supported_mimetypes.keys())
 
-    def from_data(self, data: bytes, force_mime_type: Optional[str] = None) -> Converter:
-        mime_type = Tools.detect_mimetype(data) if not force_mime_type else force_mime_type
+    def from_data(self, fp: Union[bytes, io.BytesIO, BinaryIO], force_mime_type: Optional[str] = None) -> Converter:
+        if isinstance(fp, bytes):
+            fp = io.BytesIO(fp)
+
+        try:
+            fp.seek(0)
+        except (AttributeError, io.UnsupportedOperation):
+            fp = io.BytesIO(fp.read())
+
+        mime_type = Tools.detect_mimetype(fp) if not force_mime_type else force_mime_type
         converter = self.supported_mimetypes.get(mime_type)
         if not converter:
             raise NotSupportedException('Mimetype {} is not supported, supported mimes are: {}'.format(mime_type, ', '.join(self.supported_mimetypes.keys())))
-        return converter(data, mime_type)
+        return converter(fp, mime_type)
 
-    def from_file(self, file_path: str, force_mime_type: Optional[str] = None) -> Converter:
-        path_info = Path(file_path)
+    def from_file(self, file_path: Union[str, Path], force_mime_type: Optional[str] = None) -> Converter:
+        path_info = Path(file_path) if isinstance(file_path, str) else file_path
         with path_info.open('rb') as file_handle:
-            data = file_handle.read()
-            mime_type = Tools.detect_mimetype(data, path_info) if not force_mime_type else force_mime_type
-            return self.from_data(data, mime_type)
+            mime_type = Tools.detect_mimetype(file_handle, path_info) if not force_mime_type else force_mime_type
+            return self.from_data(file_handle, mime_type)
