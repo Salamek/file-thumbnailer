@@ -16,7 +16,8 @@ setup(
         'Pillow'
     ],
     tests_require=[
-        'tox'
+        'tox',
+        'psutil'
     ],
     extras_require={
       'pdf': [
