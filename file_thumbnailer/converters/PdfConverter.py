@@ -45,9 +45,9 @@ class PdfConverter(Converter):
         selected_page: fitz.Page = self.document[page]
 
         # Compatibility with older version of fitz
-        pixmap_callable = getattr(selected_page, 'get_pixmap', getattr(selected_page, 'getPixmap'))
+        pixmap_callable = getattr(selected_page, 'get_pixmap', getattr(selected_page, 'getPixmap', None))
 
         selected_page_image = pixmap_callable(alpha=False, matrix=fitz.Matrix(4.0, 4.0))
         # Compatibility with older version of fitz
-        to_bytes_callable = getattr(selected_page_image, 'tobytes', getattr(selected_page_image, 'getPNGData'))
+        to_bytes_callable = getattr(selected_page_image, 'tobytes', getattr(selected_page_image, 'getPNGData', None))
         return Image.open(io.BytesIO(to_bytes_callable()))
