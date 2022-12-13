@@ -50,9 +50,11 @@ class Tools:
             if buffer.startswith(bytearray(magic_number)):
                 return override_mime_type
 
-        mime_type = magic.from_buffer(buffer, mime=True)  # type: ignore
+        mime_type = magic.from_buffer(buffer, mime=True)
         fp.seek(0)
         if file_path and mime_type in extension_detection_mimetypes:
-            mime_type, _ = mimetypes.guess_type(str(file_path.absolute()))
+            mime_type_guessed, _ = mimetypes.guess_type(str(file_path.absolute()))
+            if mime_type_guessed:
+                mime_type = mime_type_guessed
 
         return mime_type
