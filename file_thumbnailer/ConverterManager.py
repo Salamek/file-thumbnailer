@@ -45,7 +45,8 @@ class ConverterManager:
         mime_type = Tools.detect_mimetype(fp) if not force_mime_type else force_mime_type
         converter = self.supported_mimetypes.get(mime_type)
         if not converter:
-            raise NotSupportedException(f'Mimetype {mime_type} is not supported, supported mimes are: {', '.join(self.supported_mimetypes.keys())}')
+            supported_mimetypes = ', '.join(self.supported_mimetypes.keys())
+            raise NotSupportedException(f'Mimetype {mime_type} is not supported, supported mimes are: {supported_mimetypes}')
         return converter(fp, mime_type)
 
     def from_file(self, file_path: Union[str, Path], force_mime_type: Optional[str] = None) -> Converter:
