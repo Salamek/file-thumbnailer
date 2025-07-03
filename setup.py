@@ -8,7 +8,7 @@ def read_readme() -> str:
 
 setup(
     name='file-thumbnailer',
-    version='0.0.9',
+    version='0.1.0',
     packages=find_packages(exclude=['tests', 'tests.*']),
     package_data={'file_thumbnailer': ['py.typed']},
     install_requires=[
