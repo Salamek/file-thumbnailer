@@ -4,7 +4,7 @@ from file_thumbnailer.converters.Converter import Converter
 
 is_pil = True
 try:
-    from PIL import Image
+    from PIL import Image, ImageFile
 except ImportError:
     is_pil = False
 
@@ -38,7 +38,7 @@ class PdfConverter(Converter):
             'application/vnd.comicbook+zip'
         ]
 
-    def to_pil_image(self, page: Optional[int] = None) -> Image:
+    def to_pil_image(self, page: Optional[int] = None) -> ImageFile.ImageFile:
         if not page:
             page = 0
 
@@ -46,8 +46,13 @@ class PdfConverter(Converter):
 
         # Compatibility with older version of fitz
         pixmap_callable = getattr(selected_page, 'get_pixmap', getattr(selected_page, 'getPixmap', None))
+        if not pixmap_callable:
+            raise ValueError('Failed to retrieve pixmap callable')
 
         selected_page_image = pixmap_callable(alpha=False, matrix=fitz.Matrix(4.0, 4.0))
         # Compatibility with older version of fitz
         to_bytes_callable = getattr(selected_page_image, 'tobytes', getattr(selected_page_image, 'getPNGData', None))
+        if not to_bytes_callable:
+            raise ValueError('Failed to retrieve tobytes callable')
+
         return Image.open(io.BytesIO(to_bytes_callable()))

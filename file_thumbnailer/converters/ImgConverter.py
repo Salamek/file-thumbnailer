@@ -4,7 +4,7 @@ from file_thumbnailer.converters.Converter import Converter
 
 is_pil = True
 try:
-    from PIL import Image
+    from PIL import Image, ImageFile
 except ImportError:
     is_pil = False
 
@@ -34,5 +34,5 @@ class ImgConverter(Converter):
             'image/webp',
         ]
 
-    def to_pil_image(self, page: Optional[int] = None) -> Image:
+    def to_pil_image(self, page: Optional[int] = None) -> ImageFile.ImageFile:
         return self.image

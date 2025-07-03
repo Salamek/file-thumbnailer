@@ -1,6 +1,6 @@
 import io
 from typing import List, Optional, Union, BinaryIO
-from PIL import Image
+from PIL import ImageFile
 from file_thumbnailer.models.Dimensions import Dimensions
 from file_thumbnailer.Tools import Tools
 
@@ -19,7 +19,7 @@ class Converter:
     def get_handle_mimetypes() -> List[str]:
         raise NotImplementedError
 
-    def to_pil_image(self, page: Optional[int] = None) -> Image:
+    def to_pil_image(self, page: Optional[int] = None) -> ImageFile.ImageFile:
         raise NotImplementedError
 
     def to_image_bytes(self, dimensions: Dimensions, image_format: str = 'PNG') -> bytes:

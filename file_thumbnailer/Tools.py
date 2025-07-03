@@ -10,6 +10,9 @@ class Tools:
 
     @staticmethod
     def calculate_dimensions(from_dimensions: Dimensions, to_dimensions: Dimensions) -> Dimensions:
+        if not from_dimensions.width or not from_dimensions.height:
+            raise ValueError('from_dimensions width/height has to be set!')
+
         ratio_from = from_dimensions.width / from_dimensions.height
 
         if not to_dimensions.width and to_dimensions.height:
@@ -17,6 +20,9 @@ class Tools:
 
         if not to_dimensions.height and to_dimensions.width:
             to_dimensions.height = int(to_dimensions.width / ratio_from)
+
+        if not to_dimensions.width or not to_dimensions.height:
+            raise ValueError('Failed to resolve to_dimensions')
 
         ratio_to = to_dimensions.width / to_dimensions.height
 
